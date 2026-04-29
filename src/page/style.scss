@@ -1,0 +1,773 @@
+@use "../styles/variaveis.scss" as v;
+
+// ═══════════════════════════════════════════════════════════════════
+//  MIXINS GLOBAIS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin section-padding {
+  padding: 100px clamp(24px, 8vw, 120px);
+}
+
+@mixin gradiente-texto {
+  background: linear-gradient(
+    135deg,
+    v.$cor-primaria,
+    lighten(v.$cor-primaria, 28%)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin card-base {
+  border-radius: 16px;
+  background: rgba(v.$cor-terciaria, 0.4);
+  backdrop-filter: blur(8px);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(v.$cor-primaria, 0.2);
+  }
+}
+
+@mixin borda-roxa {
+  border: 1px solid rgba(v.$cor-primaria, 0.25);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCROLLBAR PERSONALIZADA
+//  Sem track visível, thumb na cor da paleta, bordas arredondadas
+// ═══════════════════════════════════════════════════════════════════
+
+::-webkit-scrollbar {
+  width: 6px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(v.$cor-primaria, 0.55);
+  border-radius: 100px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: rgba(v.$cor-primaria, 0.9);
+  }
+}
+
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(v.$cor-primaria, 0.55) transparent;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RESET / BASE
+// ═══════════════════════════════════════════════════════════════════
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: v.$dark;
+  color: v.$branco;
+  font-family: v.$glacial;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CONTAINER PRINCIPAL
+// ═══════════════════════════════════════════════════════════════════
+
+.container-principal {
+  width: 100%;
+  min-height: 100vh;
+  background-color: v.$dark;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(
+        ellipse 60% 50% at 50% 0%,
+        rgba(v.$cor-primaria, 0.1) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 40% 40% at 80% 80%,
+        rgba(v.$cor-secundaria, 0.07) 0%,
+        transparent 60%
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  ANTIGRAVITY — BACKGROUND INTERATIVO
+//  Orbs flutuantes que reagem ao mouse via Antigravity
+// ═══════════════════════════════════════════════════════════════════
+
+.antigravity-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SECTION-TAG com StarBorder
+// ═══════════════════════════════════════════════════════════════════
+
+// Wrapper do StarBorder — garante display correto em linha
+.section-tag-star {
+  display: inline-flex;
+  margin-bottom: 20px;
+}
+
+// Conteúdo interno do StarBorder
+.section-tag-inner {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: v.$cor-primaria;
+  padding: 4px 16px;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UTILITÁRIOS COMPARTILHADOS
+// ═══════════════════════════════════════════════════════════════════
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+
+  .section-titulo {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: v.$branco;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .section-subtitulo {
+    font-size: 1rem;
+    color: rgba(v.$branco, 0.55);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  NAVBAR
+// ═══════════════════════════════════════════════════════════════════
+
+.menu-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 72px;
+  width: 1000px;
+
+  > * {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .nav-inner {
+    @include flex-between;
+    width: 100%;
+    height: 100%;
+    padding: 0 clamp(24px, 6vw, 80px);
+  }
+
+  .container-direito {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    img {
+      width: 120px;
+      height: 120px;
+      filter: brightness(0) invert(1);
+      opacity: 0.75;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .container-esquerdo {
+    ul {
+      display: flex;
+      align-items: center;
+      gap: clamp(20px, 3vw, 40px);
+
+      li a {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: rgba(v.$branco, 0.75);
+        letter-spacing: 0.04em;
+        transition: color 0.25s ease;
+
+        &:hover {
+          color: v.$branco;
+        }
+      }
+
+      .nav-cta {
+        color: v.$branco;
+        background: rgba(v.$cor-primaria, 0.35);
+        border: 1px solid rgba(v.$cor-primaria, 0.5);
+        border-radius: 100px;
+        padding: 6px 20px;
+        transition:
+          background 0.25s ease,
+          border-color 0.25s ease;
+
+        &:hover {
+          background: rgba(v.$cor-primaria, 0.6);
+          border-color: v.$cor-primaria;
+        }
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HERO — SOBRE MIM
+// ═══════════════════════════════════════════════════════════════════
+
+.sobre-mim {
+  @include section-padding;
+  padding-top: calc(72px + 80px);
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+  position: relative;
+  z-index: 1;
+
+  // GradualBlur posicionado na base da seção
+  .hero-gradual-blur {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .sobre-texto {
+    .sobre-tag {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(v.$branco, 0.5);
+      margin-bottom: 12px;
+    }
+
+    .sobre-nome {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: v.$branco;
+      margin-bottom: 4px;
+
+      .destaque {
+        @include gradiente-texto;
+      }
+    }
+
+    .sobre-codinome {
+      font-size: 1rem;
+      color: rgba(v.$cor-primaria, 0.8);
+      letter-spacing: 0.1em;
+      margin-bottom: 28px;
+      font-style: italic;
+    }
+
+    .sobre-bio {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(v.$branco, 0.65);
+      max-width: 520px;
+      margin-bottom: 40px;
+    }
+
+    .sobre-acoes {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      .btn-primario {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: v.$cor-primaria;
+        color: v.$branco;
+        font-family: v.$glacial;
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 12px 28px;
+        border-radius: 100px;
+        transition:
+          background 0.25s ease,
+          transform 0.2s ease;
+
+        &:hover {
+          background: lighten(v.$cor-primaria, 8%);
+          transform: translateY(-2px);
+        }
+      }
+
+      .btn-secundario {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: v.$branco;
+        font-family: v.$glacial;
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 12px 28px;
+        border-radius: 100px;
+        border: 1px solid rgba(v.$branco, 0.2);
+        transition:
+          border-color 0.25s ease,
+          transform 0.2s ease;
+
+        &:hover {
+          border-color: rgba(v.$branco, 0.5);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+
+  .sobre-card {
+    @include flex-center;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PROJETOS — BENTO GRID
+// ═══════════════════════════════════════════════════════════════════
+
+.meus-projetos {
+  @include section-padding;
+  position: relative;
+  z-index: 1;
+
+  .projetos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+
+    > * {
+      min-height: 280px;
+    }
+  }
+
+  .projeto-card {
+    padding: 32px;
+    height: 100%;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .projeto-card-topo {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .projeto-titulo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: v.$branco;
+      line-height: 1.3;
+    }
+
+    .projeto-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .projeto-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: v.$cor-primaria;
+      background: rgba(v.$cor-primaria, 0.12);
+      border: 1px solid rgba(v.$cor-primaria, 0.25);
+      border-radius: 100px;
+      padding: 3px 12px;
+    }
+
+    .projeto-descricao {
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: rgba(v.$branco, 0.6);
+      flex: 1;
+    }
+
+    .projeto-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: v.$cor-primaria;
+      margin-top: auto;
+      transition:
+        color 0.2s ease,
+        gap 0.2s ease;
+
+      .projeto-link-seta {
+        margin-top: 4px;
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        color: lighten(v.$cor-primaria, 15%);
+
+        .projeto-link-seta {
+          transform: translateX(5px);
+        }
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FORMAÇÃO
+// ═══════════════════════════════════════════════════════════════════
+
+.formacao {
+  @include section-padding;
+  position: relative;
+  z-index: 1;
+
+  .formacao-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .formacao-card {
+    @include card-base;
+    @include borda-roxa;
+    display: flex;
+    gap: 20px;
+    padding: 28px;
+
+    .formacao-icone {
+      font-size: 1.7rem;
+      flex-shrink: 0;
+      padding-top: 5px;
+      width: 50px;
+      height: 50px;
+      @include flex-center;
+      background: rgba(v.$cor-primaria, 0.12);
+      border-radius: 12px;
+    }
+
+    .formacao-conteudo {
+      flex: 1;
+
+      .formacao-header {
+        @include flex-between;
+        margin-bottom: 4px;
+      }
+
+      .formacao-titulo {
+        font-size: 1rem;
+        font-weight: 700;
+        color: v.$branco;
+      }
+
+      .formacao-periodo {
+        font-size: 0.75rem;
+        color: v.$cor-primaria;
+        font-weight: 600;
+        white-space: nowrap;
+        margin-left: 12px;
+      }
+
+      .formacao-local {
+        font-size: 0.8rem;
+        color: rgba(v.$branco, 0.4);
+        margin-bottom: 10px;
+        font-style: italic;
+      }
+
+      .formacao-descricao {
+        font-size: 0.88rem;
+        line-height: 1.7;
+        color: rgba(v.$branco, 0.6);
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TECNOLOGIAS — LOGOLOOP
+// ═══════════════════════════════════════════════════════════════════
+
+.tecnologias {
+  @include section-padding;
+  position: relative;
+  z-index: 1;
+
+  .logo-loop-wrapper {
+    margin-top: 8px;
+    padding: 24px 0;
+
+    // ⚠️  FIX: REMOVIDO o filter brightness(0) invert(1)
+    // Ele causava desaparecimento de logos com canal alpha.
+    // Use opacity leve para suavizar logos muito brilhantes.
+    img {
+      opacity: 0.75;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FOOTER — FIX de logos e copyright
+// ═══════════════════════════════════════════════════════════════════
+
+.footer {
+  background: v.$cor-terciaria;
+  padding: 64px clamp(24px, 8vw, 120px) 0;
+  position: relative;
+  z-index: 1;
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 48px;
+  }
+
+  .footer-brand {
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+
+      img {
+        // FIX: logo grande do footer limitada a 140px com opacity sutil
+        width: 140px;
+        height: auto;
+        filter: brightness(0) invert(1);
+        opacity: 0.45;
+      }
+    }
+
+    .footer-descricao {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: rgba(v.$branco, 0.45);
+      max-width: 280px;
+    }
+  }
+
+  .footer-titulo-col {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(v.$branco, 0.4);
+    margin-bottom: 20px;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: rgba(v.$branco, 0.6);
+      transition: color 0.25s ease;
+
+      // FIX: ícones do footer com tamanho fixo e filtro branco
+      .footer-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+        opacity: 0.7;
+      }
+
+      &:hover {
+        color: v.$branco;
+
+        .footer-icon {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // FIX: copyright corrigido
+  .footer-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(v.$branco, 0.07);
+    flex-wrap: wrap;
+
+    p {
+      font-size: 0.8rem;
+      color: rgba(v.$branco, 0.3);
+      letter-spacing: 0.03em;
+    }
+
+    .footer-sep {
+      color: rgba(v.$branco, 0.2);
+    }
+
+    .footer-credit-link {
+      color: rgba(v.$cor-primaria, 0.7);
+      font-size: 0.8rem;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: v.$cor-primaria;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RESPONSIVIDADE
+// ═══════════════════════════════════════════════════════════════════
+
+@media (max-width: 1024px) {
+  .sobre-mim {
+    grid-template-columns: 1fr;
+    text-align: center;
+
+    .sobre-texto {
+      .sobre-bio {
+        margin: 0 auto 40px;
+      }
+
+      .sobre-acoes {
+        justify-content: center;
+      }
+    }
+
+    .sobre-card {
+      order: -1;
+    }
+  }
+
+  .meus-projetos .projetos-bento {
+    grid-template-columns: 1fr;
+
+    .bento-item--wide,
+    .bento-item--normal {
+      grid-column: span 1;
+    }
+  }
+
+  .formacao .formacao-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+
+    .footer-brand .footer-descricao {
+      max-width: 100%;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .menu-nav {
+    .container-esquerdo ul {
+      gap: 16px;
+
+      .nav-cta {
+        display: none;
+      }
+    }
+  }
+
+  .sobre-mim {
+    padding-top: calc(72px + 40px);
+  }
+
+  .section-header .section-titulo {
+    font-size: 1.6rem;
+  }
+}
