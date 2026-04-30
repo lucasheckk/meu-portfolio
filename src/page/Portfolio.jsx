@@ -1,6 +1,9 @@
 import "./style.scss";
-import { motion, useInView } from "motion/react";
-import { useRef } from "react";
+import { motion, useInView, AnimatePresence } from "motion/react";
+import { useRef, useState, useEffect } from "react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import LoadingLottie from "../assets/Lottie/LoadingAnimationHex.lottie";
+import { useScrollSystem } from '../hooks/useScrollSystem';
 
 // ─── Componentes de biblioteca ─────────────────────────────────────────────
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
@@ -15,8 +18,8 @@ import ShinyText from "../components/ShinyText/ShinyText.jsx";
 // ─── Assets ───────────────────────────────────────────────────────────────
 import GrainTexture from "../assets/dark-stone-desk-texture-with-concrete-background-high-resolution-top-view-table-with-copy-space-idea-advertising-banner-product-article.jpg";
 import LogoHex from "../assets/Logotipo-Dev_hex-completoR-sbg.png";
-import LogoHexSimple from "../assets/Logotipo-Dev_hex-white-sbg.png";
-import ProfilePick from "../assets/ProfilePick-Lucas.webp";
+import HexPattern from "../assets/HexPattern.png";
+import ProfilePick from "../assets/ProfilePick-Lucas.png";
 
 // ─── Logos para o LogoLoop ─────────────────────────────────────────────────
 import logoReact from "../assets/react.svg";
@@ -31,6 +34,7 @@ import logoVercel from "../assets/vercel.svg";
 import logoRailway from "../assets/railway.svg";
 import logoJava from "../assets/java.svg";
 import logoMotion from "../assets/motion.svg";
+import logoShadcn from "../assets/shadcn-ui.svg";
 import logoDocker from "../assets/docker.svg";
 import logoGemini from "../assets/gemini.svg";
 import logoClaude from "../assets/claude.svg";
@@ -47,7 +51,7 @@ const projetos = [
     titulo: "Portfólio Web",
     descricao:
       "SPA desenvolvida para demonstrar habilidades visualmente, contendo informações de quem sou, formações, projetos, tecnologias e formas de contato.",
-    link: "https://seu-projeto.vercel.app",
+    link: "#sobre",
     tags: ["React", "React Bits", "SCSS", "Motion", "GitHub"],
   },
   {
@@ -64,16 +68,16 @@ const projetos = [
 const formacoes = [
   {
     id: 1,
-    icone: <i className="fi-tr-computer" />,
+    icone: <i className="fi fi-sr-computer"></i>,
     titulo: "Técnico em Informática",
     local: "Universidade de Santa Cruz - UNISC",
     periodo: "2023 – 2025",
     descricao:
-      "Base sólida em lógica de programação, redes, banco de dados e desenvolvimento de sistemas. Ponto de partida para a jornada no desenvolvimento web.",
+      "Base sólida em lógica de programação, redes, banco de dados e desenvolvimento de sistemas. Ponto de partida para a minha jornada no desenvolvimento web.",
   },
   {
     id: 2,
-    icone: <i className="fi-ts-globe" />,
+    icone: <i className="fi fi-sr-flag-usa" />,
     titulo: "Inglês Avançado",
     local: "Wizard Santa Cruz do Sul",
     periodo: "2012 – 2018",
@@ -82,7 +86,7 @@ const formacoes = [
   },
   {
     id: 3,
-    icone: <i className="fi-tr-palette" />,
+    icone: <i className="fi-sr-palette" />,
     titulo: "Design Gráfico",
     local: "Senac RS",
     periodo: "2022",
@@ -91,31 +95,32 @@ const formacoes = [
   },
   {
     id: 4,
-    icone: <i className="fi-tr-chart-histogram" />,
+    icone: <i className="fi-sr-graduation-cap" />,
     titulo: "Ciência de Dados",
     local: "DNC",
     periodo: "2024 – 2025",
     descricao:
-      "Análise e visualização com Python, Power BI e Excel. ETL, tratamento de dados e geração de insights dinâmicos para tomada de decisão.",
+      "Análise e visualização de dados com Python, Power BI e Excel. ETL, tratamento de dados e geração de insights dinâmicos para tomada de decisão.",
   },
 ];
 
 const Logotipos = [
-  { name: "React", img: logoReact },
-  { name: "Node.js", img: logoNode },
-  { name: "Vite", img: logoVite },
-  { name: "SCSS", img: logoSCSS },
-  { name: "Motion", img: logoMotion },
-  { name: "Java", img: logoJava },
-  { name: "Spring Boot", img: logoSpring },
-  { name: "MySQL", img: logoMySQL },
-  { name: "Docker", img: logoDocker },
-  { name: "Git", img: logoGit },
-  { name: "GitHub", img: logoGitHub },
-  { name: "Vercel", img: logoVercel },
-  { name: "Railway", img: logoRailway },
-  { name: "Gemini", img: logoGemini },
-  { name: "Claude", img: logoClaude },
+  { alt: "React", src: logoReact },
+  { alt: "Node.js", src: logoNode },
+  { alt: "Vite", src: logoVite },
+  { alt: "SCSS", src: logoSCSS },
+  { alt: "Motion", src: logoMotion },
+  { alt: "Shadcn/ui", src: logoShadcn },
+  { alt: "Java", src: logoJava },
+  { alt: "Spring Boot", src: logoSpring },
+  { alt: "MySQL", src: logoMySQL },
+  { alt: "Docker", src: logoDocker },
+  { alt: "Git", src: logoGit },
+  { alt: "GitHub", src: logoGitHub },
+  { alt: "Vercel", src: logoVercel },
+  { alt: "Railway", src: logoRailway },
+  { alt: "Gemini", src: logoGemini },
+  { alt: "Claude", src: logoClaude },
 ];
 
 // ─── Variantes Motion ─────────────────────────────────────────────────────
@@ -145,22 +150,51 @@ const cardAnim = {
 
 // ─── Componente Principal ─────────────────────────────────────────────────
 export default function Portfolio() {
+  useScrollSystem();
   const tecnologiasRef = useRef(null);
   const tecnologiasInView = useInView(tecnologiasRef, {
     once: true,
     amount: 0.15,
   });
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="container-principal">
+      {/* ── LOADING SCREEN ──────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            className="loading-screen"
+            key="loading-screen"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            aria-label="Carregando portfólio"
+            role="status"
+          >
+            <DotLottieReact
+              src={LoadingLottie}
+              loop
+              autoplay
+              style={{ width: 260, height: 260 }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="antigravity-bg" aria-hidden="true">
         <Antigravity
           color="#2B124C"
           autoAnimate={true}
-          count={300}
-          particleSize={1.5}
-          magnetRadius={12}
-          ringRadius={8}
+          count={900}
+          particleSize={1.4}
+          magnetRadius={6}
+          ringRadius={4}
         />
       </div>
 
@@ -170,14 +204,7 @@ export default function Portfolio() {
         role="navigation"
         aria-label="Navegação principal"
       >
-        <GlassSurface
-          className="glassbk"
-          width="100%"
-          height="100%"
-          borderRadius={25}
-          opacity={0.5}
-          blur={40}
-        >
+        <GlassSurface mixBlendMode="overlay">
           <div className="nav-inner">
             <div className="container-direito" aria-label="Logo Dev Hex">
               <img src={LogoHex} alt="Logo do desenvolvedor Dev Hex" />
@@ -216,32 +243,20 @@ export default function Portfolio() {
           variants={stagger}
         >
           <motion.span className="sobre-tag" variants={fadeUp}>
-            <ShinyText text="Olá, me chamo" speed={4} />
+            <p /> Olá, me chamo
           </motion.span>
 
           <motion.h1 className="sobre-nome" variants={fadeUp}>
-            <SplitText
-              text="Lucas Felipe"
-              delay={40}
-              animationFrom={{ opacity: 0, transform: "translate3d(0,28px,0)" }}
-              animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
-            />{" "}
-            <span className="destaque">
-              <SplitText
-                text="Heck"
-                delay={40}
-                animationFrom={{
-                  opacity: 0,
-                  transform: "translate3d(0,28px,0)",
-                }}
-                animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
-              />
-            </span>
+            <ShinyText
+              text="Lucas Felipe Heck"
+              speed={4}
+              color="rgb(66,24,120)"
+              shineColor="rgb(118, 44, 215)"
+            />
           </motion.h1>
 
           <motion.p className="sobre-codinome" variants={fadeUp}>
-            {/* ShinyText no codinome */}
-            <ShinyText text="— Dev Hex" speed={3} />
+            - Dev Hex
           </motion.p>
 
           <motion.p className="sobre-bio" variants={fadeUp}>
@@ -273,17 +288,9 @@ export default function Portfolio() {
           <ProfileCard
             name="Lucas F. Heck"
             title="Desenvolvedor FullStack"
-            handle="heckkz_"
-            status="Online"
-            contactText="Me chame"
-            avatarUrl="../assets/Logotipo-Dev_hex-completoR-sbg.png"
-            miniAvatarUrl={ProfilePick}
-            iconUrl={LogoHexSimple}
+            avatarUrl={ProfilePick}
+            iconUrl={HexPattern}
             grainUrl={GrainTexture}
-            showUserInfo={true}
-            enableTilt={true}
-            enableMobileTilt={true}
-            onContactClick={() => console.log("Contact clicked")}
             behindGlowColor="rgba(95, 38, 170, 0.65)"
             behindGlowEnabled={true}
           />
@@ -303,8 +310,8 @@ export default function Portfolio() {
         <div className="section-header">
           <StarBorder
             as="span"
-            color="#5F26AA"
-            speed="6s"
+            color="rgb(157, 100, 255)"
+            speed="5s"
             className="section-tag-star"
           >
             <span className="section-tag-inner">Experiências</span>
@@ -334,10 +341,10 @@ export default function Portfolio() {
               viewport={{ once: true }}
             >
               <BorderGlow
-                glowColor="#5F26AA"
-                secondaryGlowColor="#421878"
-                background="rgba(43, 18, 76, 0.55)"
+                glowRadius={60}
+                glowIntensity={0.5}
                 borderRadius={16}
+                coneSpread={25}
               >
                 <article className="projeto-card">
                   <div className="projeto-card-topo">
@@ -383,8 +390,8 @@ export default function Portfolio() {
         <motion.div className="section-header" variants={fadeUp}>
           <StarBorder
             as="span"
-            color="#421878"
-            speed="7s"
+            color="rgb(157, 100, 255)"
+            speed="5s"
             className="section-tag-star"
           >
             <span className="section-tag-inner">Trajetória</span>
@@ -434,7 +441,7 @@ export default function Portfolio() {
         <div className="section-header">
           <StarBorder
             as="span"
-            color="#5F26AA"
+            color="rgb(157, 100, 255)"
             speed="5s"
             className="section-tag-star"
           >
@@ -449,42 +456,51 @@ export default function Portfolio() {
             />
           </h2>
           <p className="section-subtitulo">
-            Ferramentas que uso no dia a dia para construir soluções completas.
+            Ferramentas que utilizo para construir as soluções necessárias.
           </p>
         </div>
 
         <div className="logo-loop-wrapper" aria-label="Logos das tecnologias">
-          <LogoLoop logos={Logotipos} speed={35} direction="left" />
+          <LogoLoop
+            logos={Logotipos}
+            speed={25}
+            direction="left"
+            fadeOutColor="#190019"
+            className="container-logoloop"
+          />
         </div>
       </motion.section>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
       <footer className="footer" id="contato" aria-label="Rodapé e contato">
         <div className="footer-inner">
-          {/* Coluna 1 — Brand */}
-          <div className="footer-brand">
-            <div className="footer-logo">
-              {/* FIX: tamanho controlado via CSS (.footer-logo img) */}
-              <img src={LogoHex} alt="Logo Dev Hex" />
-            </div>
-            <p className="footer-descricao">
-              Desenvolvedor apaixonado por unir estética e código. Sempre aberto
-              a novos desafios e colaborações.
-            </p>
-          </div>
-
           {/* Coluna 2 — Contato */}
           <div className="footer-contato">
             <h3 className="footer-titulo-col">Contato</h3>
             <ul role="list" className="footer-links">
               <li>
                 <a
+                  href="https://github.com/lucasheckk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHUB do Lucas"
+                >
+                  <img
+                    src={logoGitHub}
+                    alt=""
+                    className="footer-icon"
+                    aria-hidden="true"
+                  />
+                  lucasheckk
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://discord.com/users/heckkz_"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Discord heckkz_"
+                  aria-label="Discord do Lucas"
                 >
-                  {/* FIX: classe footer-icon para controlar tamanho */}
                   <img
                     src={logoDiscord}
                     alt=""
@@ -499,7 +515,7 @@ export default function Portfolio() {
                   href="https://instagram.com/heckkz_"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Instagram @heckkz_"
+                  aria-label="Instagram do Lucas"
                 >
                   <img
                     src={logoIg}
@@ -511,14 +527,19 @@ export default function Portfolio() {
                 </a>
               </li>
               <li>
-                <a href="tel:+5551998277764" aria-label="WhatsApp de Lucas">
+                <a
+                  href="https://wa.me/+555198277764"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp do Lucas"
+                >
                   <img
                     src={logoWpp}
                     alt=""
                     className="footer-icon"
                     aria-hidden="true"
                   />
-                  +55 (51) 99827-7764
+                  +55 (51) 9827-7764
                 </a>
               </li>
             </ul>
@@ -544,11 +565,10 @@ export default function Portfolio() {
           </div>
         </div>
 
-        {/* FIX: copyright corrigido — direitos são somente do Uicons/Flaticon */}
         <div className="footer-copy">
           <p>Desenvolvido por Lucas Felipe Heck</p>
           <span className="footer-sep" aria-hidden="true">
-            ·
+            •
           </span>
           <p>
             Ícones por{" "}
@@ -559,6 +579,20 @@ export default function Portfolio() {
               className="footer-credit-link"
             >
               Uicons — Flaticon
+            </a>
+          </p>
+          <span className="footer-sep" aria-hidden="true">
+            •
+          </span>
+          <p>
+            Grain texture por{" "}
+            <a
+              href="http://www.freepik.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-credit-link"
+            >
+              GarryKillian / Freepik
             </a>
           </p>
         </div>

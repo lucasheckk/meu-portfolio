@@ -33,7 +33,8 @@
 
 @mixin card-base {
   border-radius: 16px;
-  background: rgba(v.$cor-terciaria, 0.4);
+  background: #190019;
+  border: solid 1.5px rgb(255 255 255 / 15%);
   backdrop-filter: blur(8px);
   transition:
     transform 0.3s ease,
@@ -46,7 +47,7 @@
 }
 
 @mixin borda-roxa {
-  border: 1px solid rgba(v.$cor-primaria, 0.25);
+  border: 1.5px solid rgba(v.$cor-primaria, 0.25);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -89,10 +90,6 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 body {
@@ -139,6 +136,15 @@ ul {
     pointer-events: none;
     z-index: 0;
   }
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999; 
+  background-color: v.$dark;
+  @include flex-center;
+  pointer-events: all; 
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -206,12 +212,12 @@ ul {
 
 .menu-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 100;
-  height: 72px;
-  width: 1000px;
+  height: 64px;
+  width: min(1000px, calc(100% - 48px));
 
   > * {
     width: 100% !important;
@@ -222,7 +228,7 @@ ul {
     @include flex-between;
     width: 100%;
     height: 100%;
-    padding: 0 clamp(24px, 6vw, 80px);
+    padding: 0 clamp(24px, 6vw, 48px);
   }
 
   .container-direito {
@@ -262,18 +268,17 @@ ul {
       }
 
       .nav-cta {
-        color: v.$branco;
-        background: rgba(v.$cor-primaria, 0.35);
-        border: 1px solid rgba(v.$cor-primaria, 0.5);
+        color: rgba(v.$branco, 0.75);
+        background: v.$cor-secundaria;
+        border: 1.5px solid rgba(v.$cor-primaria, 0.5);
         border-radius: 100px;
         padding: 6px 20px;
-        transition:
-          background 0.25s ease,
-          border-color 0.25s ease;
+        transition: ease-in-out 0.25s;
 
         &:hover {
-          background: rgba(v.$cor-primaria, 0.6);
-          border-color: v.$cor-primaria;
+          background-color: v.$cor-primaria;
+          color: v.$branco;
+          transition: ease-in-out 0.25s;
         }
       }
     }
@@ -286,7 +291,7 @@ ul {
 
 .sobre-mim {
   @include section-padding;
-  padding-top: calc(72px + 80px);
+  padding-top: 120px;
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -330,7 +335,7 @@ ul {
 
     .sobre-codinome {
       font-size: 1rem;
-      color: rgba(v.$cor-primaria, 0.8);
+      color: rgba(v.$branco, 0.65);
       letter-spacing: 0.1em;
       margin-bottom: 28px;
       font-style: italic;
@@ -353,19 +358,19 @@ ul {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: v.$cor-primaria;
         color: v.$branco;
         font-family: v.$glacial;
         font-size: 0.9rem;
-        font-weight: 600;
+        font-weight: 500;
         padding: 12px 28px;
         border-radius: 100px;
-        transition:
-          background 0.25s ease,
-          transform 0.2s ease;
+        border: 1.5px solid rgba(v.$branco, 0.2);
+        transition: ease-in-out 0.2s;
 
         &:hover {
-          background: lighten(v.$cor-primaria, 8%);
+          background: v.$cor-primaria;
+          border-color: v.$cor-primaria;
+          transition: ease-in-out 0.2s;
           transform: translateY(-2px);
         }
       }
@@ -378,17 +383,17 @@ ul {
         color: v.$branco;
         font-family: v.$glacial;
         font-size: 0.9rem;
-        font-weight: 600;
+        font-weight: 500;
         padding: 12px 28px;
         border-radius: 100px;
-        border: 1px solid rgba(v.$branco, 0.2);
-        transition:
-          border-color 0.25s ease,
-          transform 0.2s ease;
+        border: 1.5px solid rgba(v.$branco, 0.2);
+        transition: ease-in-out 0.2s;
 
         &:hover {
-          border-color: rgba(v.$branco, 0.5);
+          border-color: v.$cor-primaria;
+          background-color: v.$cor-primaria;
           transform: translateY(-2px);
+          transition: ease-in-out 0.2s;
         }
       }
     }
@@ -400,7 +405,7 @@ ul {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  PROJETOS — BENTO GRID
+//  PROJETOS 
 // ═══════════════════════════════════════════════════════════════════
 
 .meus-projetos {
@@ -423,6 +428,8 @@ ul {
     height: 100%;
     min-height: 260px;
     display: flex;
+    border: solid 1.5px rgb(255 255 255 / 15%);
+    border-radius: 16px;
     flex-direction: column;
     gap: 16px;
 
@@ -465,6 +472,7 @@ ul {
     }
 
     .projeto-link {
+      width: max-content;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -478,6 +486,7 @@ ul {
 
       .projeto-link-seta {
         margin-top: 4px;
+        margin-left: 2px;
         transition: transform 0.2s ease;
       }
 
@@ -509,20 +518,51 @@ ul {
 
   .formacao-card {
     @include card-base;
-    @include borda-roxa;
     display: flex;
     gap: 20px;
     padding: 28px;
+    transition: ease-in-out 0.25s;
+
+    &:hover {
+      border-color: rgba(v.$cor-primaria, 0.5);
+      transition: ease-in-out 0.25s;
+
+      .formacao-icone {
+        color: v.$cor-primaria;
+        transition: ease-in-out 0.25s;
+      }
+
+      .formacao-conteudo {
+        .formacao-titulo {
+          color: v.$cor-primaria;
+          transition: ease-in-out 0.25s;
+        }
+        .formacao-periodo {
+          color: v.$cor-primaria;
+          transition: ease-in-out 0.25s;
+        }
+        .formacao-local {
+          color: rgba(v.$branco, 0.6);
+          transition: ease-in-out 0.25s;
+        }
+        .formacao-descricao {
+          color: rgba(v.$branco, 0.7);
+          transition: ease-in-out 0.25s;
+        }
+      }
+    }
 
     .formacao-icone {
+      color: v.$branco;
       font-size: 1.7rem;
       flex-shrink: 0;
       padding-top: 5px;
       width: 50px;
       height: 50px;
       @include flex-center;
-      background: rgba(v.$cor-primaria, 0.12);
+      background-color: rgba(v.$branco, 0.1);
       border-radius: 12px;
+      transition: ease-in-out 0.25s;
     }
 
     .formacao-conteudo {
@@ -530,34 +570,39 @@ ul {
 
       .formacao-header {
         @include flex-between;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
       }
 
       .formacao-titulo {
         font-size: 1rem;
+        font-family: v.$jakarta;
         font-weight: 700;
         color: v.$branco;
+        transition: ease-in-out 0.25s;
       }
 
       .formacao-periodo {
         font-size: 0.75rem;
-        color: v.$cor-primaria;
+        color: rgba(v.$branco, 0.5);
         font-weight: 600;
         white-space: nowrap;
         margin-left: 12px;
+        transition: ease-in-out 0.25s;
       }
 
       .formacao-local {
         font-size: 0.8rem;
-        color: rgba(v.$branco, 0.4);
-        margin-bottom: 10px;
+        color: rgba(v.$branco, 0.5);
+        margin-bottom: 8px;
         font-style: italic;
+        transition: ease-in-out 0.25s;
       }
 
       .formacao-descricao {
         font-size: 0.88rem;
         line-height: 1.7;
-        color: rgba(v.$branco, 0.6);
+        color: rgba(v.$branco, 0.5);
+        transition: ease-in-out 0.25s;
       }
     }
   }
@@ -573,18 +618,25 @@ ul {
   z-index: 1;
 
   .logo-loop-wrapper {
-    margin-top: 8px;
-    padding: 24px 0;
+    border: solid 1.5px rgb(255 255 255 / 15%);
+    border-radius: 16px;
+    padding: 20px;
+    background-color: #190019;
+    transition: ease-in-out 0.25s;
 
-    // ⚠️  FIX: REMOVIDO o filter brightness(0) invert(1)
-    // Ele causava desaparecimento de logos com canal alpha.
-    // Use opacity leve para suavizar logos muito brilhantes.
+    &:hover {
+      border: 1.5px solid rgba(v.$cor-primaria, 0.6);
+      transition: ease-in-out 0.25s;
+      box-shadow: 0 4px 48px rgba(v.$cor-primaria, 0.2);
+    }
+
     img {
       opacity: 0.75;
-      transition: opacity 0.3s ease;
+      transition: ease-in-out 0.25s;
 
       &:hover {
         opacity: 1;
+        transition: ease-in-out 0.25s;
       }
     }
   }
@@ -595,40 +647,18 @@ ul {
 // ═══════════════════════════════════════════════════════════════════
 
 .footer {
-  background: v.$cor-terciaria;
-  padding: 64px clamp(24px, 8vw, 120px) 0;
+  background: rgba(v.$cor-terciaria, 0.4);
+  backdrop-filter: blur(35px);
+  padding: 45px clamp(24px, 8vw, 120px) 0;
   position: relative;
   z-index: 1;
 
   .footer-inner {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 48px;
-    padding-bottom: 48px;
-  }
-
-  .footer-brand {
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-
-      img {
-        // FIX: logo grande do footer limitada a 140px com opacity sutil
-        width: 140px;
-        height: auto;
-        filter: brightness(0) invert(1);
-        opacity: 0.45;
-      }
-    }
-
-    .footer-descricao {
-      font-size: 0.88rem;
-      line-height: 1.75;
-      color: rgba(v.$branco, 0.45);
-      max-width: 280px;
-    }
+    display: flex;
+    justify-content: center;
+    gap: 200px;
+    padding-bottom: 20px;
+    align-items: center;
   }
 
   .footer-titulo-col {
@@ -646,14 +676,14 @@ ul {
     gap: 14px;
 
     li a {
+      width: max-content;
       display: flex;
       align-items: center;
       gap: 10px;
       font-size: 0.9rem;
       color: rgba(v.$branco, 0.6);
-      transition: color 0.25s ease;
+      transition: ease-in-out 0.25s;
 
-      // FIX: ícones do footer com tamanho fixo e filtro branco
       .footer-icon {
         width: 18px;
         height: 18px;
@@ -661,10 +691,13 @@ ul {
         object-fit: contain;
         filter: brightness(0) invert(1);
         opacity: 0.7;
+        transition: ease-in-out 0.25s;
       }
 
       &:hover {
         color: v.$branco;
+        transition: ease-in-out 0.25s;
+        transform: translateY(-1px);
 
         .footer-icon {
           opacity: 1;
@@ -673,18 +706,16 @@ ul {
     }
   }
 
-  // FIX: copyright corrigido
   .footer-copy {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
     padding: 24px 0;
-    border-top: 1px solid rgba(v.$branco, 0.07);
     flex-wrap: wrap;
 
     p {
-      font-size: 0.8rem;
+      font-size: 1rem;
       color: rgba(v.$branco, 0.3);
       letter-spacing: 0.03em;
     }
@@ -695,7 +726,7 @@ ul {
 
     .footer-credit-link {
       color: rgba(v.$cor-primaria, 0.7);
-      font-size: 0.8rem;
+      font-size: 1rem;
       transition: color 0.2s ease;
 
       &:hover {

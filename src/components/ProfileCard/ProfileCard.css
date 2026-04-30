@@ -1,3 +1,5 @@
+@import url('https://fonts.cdnfonts.com/css/glacial-indifference');
+
 :root {
   --pointer-x: 50%;
   --pointer-y: 50%;
@@ -70,9 +72,9 @@
     calc((var(--pointer-from-top) * 20px) - 6px) 20px -5px;
   transition: transform 1s ease;
   transform: translateZ(0) rotateX(0deg) rotateY(0deg);
-  background: rgba(0, 0, 0, 0.9);
   backface-visibility: hidden;
   overflow: hidden;
+  border: solid 1.5px #2B124C;
 }
 
 .pc-card:hover,
@@ -234,11 +236,11 @@
   overflow: hidden;
   background-image: radial-gradient(
     farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsl(248, 25%, 80%) 12%,
-    hsla(207, 40%, 30%, 0.8) 90%
+    hsl(266, 34%, 58%) 12%,
+    hsl(266, 62%, 18%) 90%
   );
   mix-blend-mode: overlay;
-  filter: brightness(0.8) contrast(1.2);
+  filter: brightness(0.7) contrast(1.2);
   z-index: 4;
 }
 
@@ -333,15 +335,17 @@
 }
 
 .pc-contact-btn {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 12px;
   font-weight: 600;
+  background-color: transparent;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
+  font-family: 'Glacial Indifference', sans-serif;
 }
 
 .pc-contact-btn:hover {
@@ -375,9 +379,10 @@
 .pc-details h3 {
   font-weight: 600;
   margin: 0;
+  padding-bottom: 15px;
   font-size: min(5svh, 3em);
-  margin: 0;
-  background-image: linear-gradient(to bottom, #fff, #6f6fbe);
+  font-family: 'Glacial Indifference', sans-serif;
+  background-image: linear-gradient(to bottom, #fff, #4a4ac0);
   background-size: 1em 1.5em;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -386,6 +391,7 @@
 
 .pc-details p {
   font-weight: 600;
+  font-family: 'Glacial Indifference', sans-serif;
   position: relative;
   top: -12px;
   white-space: nowrap;

@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
 const AntigravityInner = ({
@@ -10,8 +10,8 @@ const AntigravityInner = ({
   waveAmplitude = 1,
   particleSize = 2,
   lerpSpeed = 0.1,
-  color = "#2D1057", // roxo escuro — fundo discreto
-  autoAnimate = true, // anima sozinho quando o mouse está parado
+  color = "#2D1057", 
+  autoAnimate = true, 
   particleVariance = 1,
   rotationSpeed = 0,
   depthFactor = 1,
@@ -26,18 +26,6 @@ const AntigravityInner = ({
   // ─── Mouse global: funciona mesmo com canvas sem pointer-events ────────
   const globalMouse = useRef({ x: 0, y: 0 });
   const lastMoveTime = useRef(0);
-
-  useEffect(() => {
-    const onMove = (e) => {
-      globalMouse.current = {
-        x: (e.clientX / window.innerWidth) * 2 - 1,
-        y: -(e.clientY / window.innerHeight) * 2 + 1,
-      };
-      lastMoveTime.current = Date.now();
-    };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
 
   const particles = useMemo(() => {
     const temp = [];
