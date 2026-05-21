@@ -37,6 +37,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: solid 1.5px v.$cor-terciaria;
+  
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -95,7 +96,7 @@ body {
   background-color: v.$dark;
   color: v.$branco;
   font-family: v.$glacial;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 a {
@@ -204,20 +205,12 @@ ul {
 
 // ═══════════════════════════════════════════════════════════════════
 //  NAVBAR
-//
-//  Centralização correta para position: fixed com Motion:
-//  - left: 50%  →  move a borda esquerda ao centro da tela
-//  - NÃO usar transform: translateX(-50%) no CSS!
-//    O Motion gerencia o transform completo via prop x="-50%".
-//    Misturar CSS transform + Motion redefine um ao outro e
-//    quebra tanto a centralização quanto a animação de entrada.
 // ═══════════════════════════════════════════════════════════════════
 
 .menu-nav {
   position: fixed;
   top: 16px;
   left: 50%;
-  // transform é gerenciado pelo Motion (x: "-50%") — não declarar aqui
   z-index: 100;
   height: 70px;
   width: min(900px, calc(100% - 40px));
@@ -401,6 +394,7 @@ ul {
 
   .sobre-card {
     @include flex-center;
+    margin-left: 180px;
   }
 }
 
@@ -728,32 +722,25 @@ ul {
 //  RESPONSIVIDADE
 // ═══════════════════════════════════════════════════════════════════
 
+// ── 1024px — tablet landscape ──────────────────────────────────────
 @media (max-width: 1024px) {
   .sobre-mim {
     grid-template-columns: 1fr;
     text-align: center;
+    gap: 40px;
 
     .sobre-texto {
       .sobre-bio {
         margin: 0 auto 40px;
       }
-
       .sobre-acoes {
         justify-content: center;
       }
     }
 
     .sobre-card {
-      order: -1;
-    }
-  }
-
-  .meus-projetos .projetos-bento {
-    grid-template-columns: 1fr;
-
-    .bento-item--wide,
-    .bento-item--normal {
-      grid-column: span 1;
+      order: 2;
+      margin-left: 0;
     }
   }
 
@@ -762,31 +749,162 @@ ul {
   }
 
   .footer .footer-inner {
-    grid-template-columns: 1fr;
-    gap: 32px;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    text-align: center;
 
-    .footer-brand .footer-descricao {
-      max-width: 100%;
+    .footer-links {
+      align-items: center;
+
+      li a {
+        justify-content: center;
+        margin: 0 auto;
+      }
     }
   }
 }
 
-@media (max-width: 640px) {
+// ── 768px — tablet portrait / celulares maiores ─────────────────────
+@media (max-width: 768px) {
+
+  // ── Navbar: compacta e centralizada ───────────────────────────
   .menu-nav {
+    height: 56px;
+    width: calc(100% - 32px);
+
+    .container-direito {
+      display: none;
+    }
+
+    .nav-inner {
+      justify-content: center;
+    }
+
+    .container-esquerdo {
+      padding: 0 16px;
+      width: 100%;
+
+      ul {
+        width: 100%;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: nowrap;
+
+        li a {
+          font-size: 0.8rem;
+        }
+
+        // Mostra o botão Contato (estava oculto no breakpoint anterior)
+        .nav-cta {
+          display: inline-block;
+          padding: 5px 14px;
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+
+  // ── Hero: desativa hover/touch do ProfileCard ──────────────────
+  .sobre-mim {
+    padding-top: calc(56px + 32px);
+  }
+
+  .sobre-card {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // ── Projetos: 1 coluna ─────────────────────────────────────────
+  .meus-projetos {
+    .projetos-grid {
+      grid-template-columns: 1fr;
+
+      > * {
+        min-height: unset;
+      }
+    }
+
+    .projeto-card {
+      min-height: unset;
+      padding: 24px;
+    }
+  }
+
+  // ── Formação: cards compactos ──────────────────────────────────
+  .formacao {
+    .formacao-card {
+      padding: 20px;
+      gap: 14px;
+
+      .formacao-icone {
+        width: 42px;
+        height: 42px;
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  // ── Tecnologias: 3 carrosséis empilhados (1×3) ────────────────
+  // Remove o display:none anterior — mostra todos, mas em coluna
+  .tecnologias {
+    .logo-loop-wrapper {
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+
+      // Garante que todos os filhos ficam visíveis
+      > * {
+        display: flex !important;
+      }
+    }
+  }
+
+  // ── Footer copy: empilhado, sem separadores ────────────────────
+  .footer {
+    .footer-copy {
+      flex-direction: column;
+      gap: 6px;
+      text-align: center;
+
+      .footer-sep {
+        display: none;
+      }
+    }
+  }
+}
+
+// ── 420px — cobre 360×800 (Android) e 390×844 (iOS) ────────────────
+// Aperto máximo da navbar para caber todos os itens sem overflow
+@media (max-width: 420px) {
+
+  .menu-nav {
+    width: calc(100% - 100px);
+    height: 52px;
+    
     .container-esquerdo ul {
-      gap: 16px;
+      gap: 12px;
+
+      li a {
+        font-size: 0.72rem;
+      }
 
       .nav-cta {
-        display: none;
+        padding: 4px 10px;
+        font-size: 0.72rem;
       }
     }
   }
 
   .sobre-mim {
-    padding-top: calc(72px + 40px);
+    padding-top: calc(52px + 24px);
   }
 
   .section-header .section-titulo {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
+  }
+
+  footer {
+    
   }
 }

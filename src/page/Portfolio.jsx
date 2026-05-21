@@ -176,10 +176,6 @@ export default function Portfolio() {
         />
       </div>
 
-      {/*
-       * Todo o conteúdo principal só monta depois que a loading screen saiu.
-       * Isso reseta todos os whileInView / useInView naturalmente, sem gambiarras.
-       */}
       {contentReady && (
         <>
           {/* ── NAVBAR ────────────────────────────────────────────────── */}
@@ -222,10 +218,6 @@ export default function Portfolio() {
           </motion.nav>
 
           {/* ── HERO — SOBRE MIM ───────────────────────────────────────── */}
-          {/*
-           * Usa animate="visible" diretamente porque o componente só monta
-           * quando contentReady = true, então o usuário sempre vê a animação.
-           */}
           <section className="sobre-mim" id="sobre" aria-label="Sobre mim">
             <motion.div
               className="sobre-texto"
@@ -290,10 +282,6 @@ export default function Portfolio() {
           </section>
 
           {/* ── PROJETOS ────────────────────────────────────────────────── */}
-          {/*
-           * whileInView funciona corretamente aqui porque o elemento só existe
-           * no DOM após o loading, então o Intersection Observer parte do zero.
-           */}
           <motion.section
             className="meus-projetos"
             id="projetos"
@@ -364,7 +352,7 @@ export default function Portfolio() {
                         className="projeto-link"
                         aria-label={`Acessar projeto ${projeto.titulo}`}
                       >
-                        Acessar sistema
+                        Acessar projeto
                         <span className="projeto-link-seta" aria-hidden="true">
                           <i className="fi fi-sr-arrow-right" />
                         </span>
@@ -441,10 +429,6 @@ export default function Portfolio() {
           </motion.section>
 
           {/* ── TECNOLOGIAS ──────────────────────────────────────────────── */}
-          {/*
-           * whileInView garante que o observer é criado no momento em que o
-           * elemento monta, evitando o problema do useInView com ref nulo.
-           */}
           <motion.section
             className="tecnologias"
             id="tecnologias"
